@@ -5,6 +5,8 @@
 npm install
 ```
 
+It is highly recommended you install both `Vetur` and `Eslint` vscode extensions in order to keep consistant formatting and auto check for errors in your code
+
 ### Compiles and hot-reloads for development
 ```
 npm run serve
