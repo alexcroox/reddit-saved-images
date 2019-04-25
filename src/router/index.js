@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '@/views/Home.vue'
+import Posts from '@/views/Posts.vue'
 import authGuard from '@/router/guards/auth.guard'
 
 Vue.use(Router)
@@ -10,9 +10,9 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'posts',
       beforeEnter: authGuard,
-      component: Home
+      component: Posts
     },
     {
       path: '/setup',

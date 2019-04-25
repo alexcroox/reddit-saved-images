@@ -34,8 +34,17 @@ export default {
   computed: {
     ...mapState({
       loading: state => state.auth.loading,
-      error: state => state.auth.error
+      error: state => state.auth.error,
+      username: state => state.auth.username
     })
+  },
+
+  watch: {
+    username: function(name) {
+      if (name) {
+        this.$router.push('posts')
+      }
+    }
   },
 
   methods: {
@@ -91,7 +100,7 @@ export default {
         // Finally get our user from the API, our watch above should redirect us if all is good
         this.getUser()
       } catch (error) {
-        console.error(error)
+        //console.error(error)
 
         this.setLoading(false)
         return this.setError(

@@ -1,10 +1,9 @@
 import { LOGOUT } from '@/store/modules/auth.module'
-import TokenService from '@/common/token.service'
 
 class Api {
   init(store) {
     this.store = store
-    this.authCode = btoa(`${process.env.VUE_APP_REDDIT_CLIENT_ID}:${''}`)
+    this.authCode = btoa(`${process.env.VUE_APP_REDDIT_CLIENT_ID}:`)
   }
 
   // Oauth requests go to www.reddit.com with Basic Authorization and x-www-form-urlencoded
@@ -12,13 +11,12 @@ class Api {
     let fetchHeaders = {
       Accept: 'application/json',
       Authorization: `Basic ${this.authCode}`,
-      'Content-type': 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/x-www-form-urlencoded'
     }
 
     let fetchOptions = {
       method,
-      mode: 'no-cors',
-      fetchHeaders
+      headers: fetchHeaders
     }
 
     // Form data must be x-www-form-urlencoded
@@ -53,7 +51,9 @@ class Api {
   async request(method, path) {
     console.log('Requesting path', path)
 
-    const accessToken = TokenService.getToken()
+    const accessToken = this.store.state.auth.tokens.accessToken
+
+    console.log({ accessToken })
 
     let fetchHeaders = {
       Authorization: `bearer ${accessToken}`,
@@ -64,7 +64,7 @@ class Api {
       process.env.VUE_APP_REDDIT_REQUEST_API_BASE_URL + path,
       {
         method,
-        fetchHeaders
+        headers: fetchHeaders
       }
     )
 

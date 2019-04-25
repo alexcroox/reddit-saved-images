@@ -12,23 +12,30 @@ export const GET_USER = 'auth/GET_USER'
 
 // Mutations
 export const SET_TOKENS = 'auth/SET_TOKENS'
-export const SET_USER = 'auth/SET_USER'
+export const SET_USERNAME = 'auth/SET_USERNAME'
 export const SET_ERROR = 'auth/SET_ERROR'
 export const SET_LOADING = 'auth/SET_LOADING'
 export const RESET_STATE = 'auth/RESET_STATE'
 
 const initialState = () => {
   return {
-    isAuthenticated: !!TokenService.getToken(ACCESS_TOKEN_KEY),
     loading: false,
+    tokens: {
+      accessToken: null,
+      refreshToken: null
+    },
     error: null,
-    user: {}
+    username: null
   }
 }
 
 const getters = {
   currentUser(state) {
     return state.user
+  },
+
+  isAuthenticated(state) {
+    return state.username ? true : false
   }
 }
 
@@ -54,11 +61,11 @@ const actions = {
     console.log('Getting user')
     let response = await apiService.request('GET', '/api/v1/me')
 
-    if (!response) {
+    if (!response || 'name' in response === false) {
       return null
     }
 
-    return context.commit(SET_USER, response)
+    return context.commit(SET_USERNAME, response.name)
   },
 
   [LOGOUT](context) {
@@ -79,13 +86,12 @@ const mutations = {
   },
 
   [SET_TOKENS](state, tokens) {
-    state.isAuthenticated = true
     state.tokens = { ...state.tokens, ...tokens }
     state.error = null
   },
 
-  [SET_USER](state, user) {
-    state.user = user
+  [SET_USERNAME](state, username) {
+    state.username = username
   },
 
   [RESET_STATE](state) {

@@ -9,6 +9,7 @@
 <script>
 import { mapState, mapActions } from 'vuex'
 import { START_AUTH } from '@/store/modules/auth.module.js'
+import { FETCH_POSTS } from '@/store/modules/posts.module.js'
 import HeadingTitle from '@/components/HeadingTitle.vue'
 import Button from '@/components/Button.vue'
 
@@ -17,14 +18,21 @@ export default {
     HeadingTitle,
     'v-button': Button
   },
+
+  mounted() {
+    this.fetchPosts()
+  },
+
   computed: {
     ...mapState({
       redirecting: state => state.auth.redirecting
     })
   },
+
   methods: {
     ...mapActions({
-      startAuth: START_AUTH
+      startAuth: START_AUTH,
+      fetchPosts: FETCH_POSTS
     })
   }
 }

@@ -31,6 +31,6 @@ export const destroyToken = key => {
     return false
   }
 
-  localStorage.delete(ACCESS_TOKEN_KEY)
+  localStorage.delete(key)
 }
 export default { getToken, saveToken, destroyToken }
