@@ -1,5 +1,5 @@
 <template>
-  <button class="button" :class="{ 'button--loading': loading }">
+  <button @click="$emit('click')" class="button" :class="{ 'button--loading': loading }">
     <slot>Submit</slot>
   </button>
 </template>
@@ -25,10 +25,13 @@ export default {
   border-radius: 3px;
   position: relative;
   z-index: 1;
+  background-color: #0052cc;
+  color: #fff;
 }
 
 .button:hover {
   cursor: pointer;
+  background-color: #0065ff;
 }
 
 .button--loading {

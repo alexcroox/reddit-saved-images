@@ -6,7 +6,7 @@ const authCheck = async (to, from, next) => {
   if (store.state.auth.isAuthenticated) {
     next()
   } else {
-    next('/auth')
+    next('/setup')
   }
 }
 

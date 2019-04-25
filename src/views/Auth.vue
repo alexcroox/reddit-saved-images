@@ -1,17 +1,19 @@
 <template>
-  <div>
-    <div class="home">Auth</div>
-    <v-button :loading="true">Authorise with reddit.com</v-button>
-  </div>
+  <span>Loading...</span>
 </template>
 
 <script>
-import Button from '@/components/Button.vue'
+import { mapState, mapActions } from 'vuex'
+import { START_AUTH } from '@/store/modules/auth.module.js'
 
 export default {
-  name: 'auth',
-  components: {
-    'v-button': Button
+  mounted() {
+    console.log(this.$route.query)
+  },
+  methods: {
+    ...mapActions({
+      startAuth: START_AUTH
+    })
   }
 }
 </script>

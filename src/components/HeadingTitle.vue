@@ -1,14 +1,13 @@
 <template>
-  <h1 class="title">{{ msg }}</h1>
+  <h1 class="title">
+    <slot></slot>
+  </h1>
 </template>
 
 <script>
 export default {
-  name: "Title",
-  props: {
-    msg: String
-  }
-};
+  name: 'Title'
+}
 </script>
 
 <style scoped lang="scss">

@@ -2,7 +2,10 @@
   <div>
     <heading-title>Reddit Saved Images</heading-title>
     <p>View all your Reddit saved image posts in a grid for easy reference</p>
-    <v-button @click="startAuth" :loading="redirecting">Authorise with reddit.com</v-button>
+    <v-button
+      @click="startAuth"
+      :loading="redirectingToReddit"
+    >{{ redirectingToReddit ? 'Redirecting to reddit.com...' : 'Authorise with reddit.com' }}</v-button>
   </div>
 </template>
 
@@ -19,7 +22,7 @@ export default {
   },
   computed: {
     ...mapState({
-      redirecting: state => state.auth.redirecting
+      redirectingToReddit: state => state.auth.redirecting
     })
   },
   methods: {
