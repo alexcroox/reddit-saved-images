@@ -1,106 +1,95 @@
-import Vue from 'vue'
-import axios from 'axios'
-import VueAxios from 'vue-axios'
-import JwtService from '@/common/jwt.service'
-import { API_URL } from '@/common/config'
+import store from '@/store'
+import { LOGOUT } from '@/store/modules/auth.module'
+import TokenService from '@/common/token.service'
 
-const ApiService = {
-  init() {
-    Vue.use(VueAxios, axios)
-    Vue.axios.defaults.baseURL = API_URL
-  },
-
-  setHeader() {
-    Vue.axios.defaults.headers.common[
-      'Authorization'
-    ] = `Token ${JwtService.getToken()}`
-  },
-
-  query(resource, params) {
-    return Vue.axios.get(resource, params).catch(error => {
-      throw new Error(`[RWV] ApiService ${error}`)
-    })
-  },
-
-  get(resource, slug = '') {
-    return Vue.axios.get(`${resource}/${slug}`).catch(error => {
-      throw new Error(`[RWV] ApiService ${error}`)
-    })
-  },
-
-  post(resource, params) {
-    return Vue.axios.post(`${resource}`, params)
-  },
-
-  update(resource, slug, params) {
-    return Vue.axios.put(`${resource}/${slug}`, params)
-  },
-
-  put(resource, params) {
-    return Vue.axios.put(`${resource}`, params)
-  },
-
-  delete(resource) {
-    return Vue.axios.delete(resource).catch(error => {
-      throw new Error(`[RWV] ApiService ${error}`)
-    })
+class Api {
+  constructor() {
+    this.authCode = btoa(`${process.env.VUE_APP_REDDIT_CLIENT_ID}:${''}`)
   }
-}
 
-export default ApiService
-
-export const TagsService = {
-  get() {
-    return ApiService.get('tags')
-  }
-}
-
-export const ArticlesService = {
-  query(type, params) {
-    return ApiService.query('articles' + (type === 'feed' ? '/feed' : ''), {
-      params: params
-    })
-  },
-  get(slug) {
-    return ApiService.get('articles', slug)
-  },
-  create(params) {
-    return ApiService.post('articles', { article: params })
-  },
-  update(slug, params) {
-    return ApiService.update('articles', slug, { article: params })
-  },
-  destroy(slug) {
-    return ApiService.delete(`articles/${slug}`)
-  }
-}
-
-export const CommentsService = {
-  get(slug) {
-    if (typeof slug !== 'string') {
-      throw new Error(
-        '[RWV] CommentsService.get() article slug required to fetch comments'
-      )
+  // Oauth requests go to www.reddit.com with Basic Authorization and x-www-form-urlencoded
+  async authRequest(method, path, data = {}) {
+    let fetchHeaders = {
+      Accept: 'application/json',
+      Authorization: `Basic ${this.authCode}`,
+      'Content-type': 'application/x-www-form-urlencoded'
     }
-    return ApiService.get('articles', `${slug}/comments`)
-  },
 
-  post(slug, payload) {
-    return ApiService.post(`articles/${slug}/comments`, {
-      comment: { body: payload }
+    let fetchOptions = {
+      method,
+      fetchHeaders
+    }
+
+    // Form data must be x-www-form-urlencoded
+    let formData = this.prepFormData(data)
+
+    if (formData) {
+      fetchOptions.body = formData
+    }
+
+    let response = await fetch(
+      process.env.VUE_APP_REDDIT_AUTH_API_BASE_URL + path,
+      fetchOptions
+    )
+
+    if (!response.ok) {
+      return false
+    }
+
+    let responseData = await response.json()
+
+    return responseData
+  }
+
+  // Normal requests for data go to oauth.reddit.com with a bearer token
+  async request(method, path) {
+    console.log('Requesting path', path)
+
+    const accessToken = TokenService.getToken()
+
+    let fetchHeaders = {
+      Authorization: `bearer ${accessToken}`,
+      Accept: 'application/json'
+    }
+
+    let response = await fetch(
+      process.env.VUE_APP_REDDIT_REQUEST_API_BASE_URL + path,
+      {
+        method,
+        fetchHeaders
+      }
+    )
+
+    console.log('Api response', response.status)
+
+    // Unauthorized, we need to login again
+    if (response.status === 401) {
+      store.dispatch(LOGOUT)
+      return false
+    }
+
+    if (!response.ok) return false
+
+    let responseData = await response.json()
+
+    return responseData
+  }
+
+  prepFormData(dataObject) {
+    if (!Object.keys(dataObject).length) {
+      return false
+    }
+
+    let formData = ''
+
+    Object.keys(dataObject).forEach(key => {
+      formData += `${encodeURIComponent(key)}=${encodeURIComponent(
+        dataObject[key]
+      )}&`
     })
-  },
 
-  destroy(slug, commentId) {
-    return ApiService.delete(`articles/${slug}/comments/${commentId}`)
+    return formData
   }
 }
 
-export const FavoriteService = {
-  add(slug) {
-    return ApiService.post(`articles/${slug}/favorite`)
-  },
-  remove(slug) {
-    return ApiService.delete(`articles/${slug}/favorite`)
-  }
-}
+export default new Api()

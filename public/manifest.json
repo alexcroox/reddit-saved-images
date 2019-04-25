@@ -1,6 +1,6 @@
 {
-  "name": "test",
-  "short_name": "test",
+  "name": "RedditSavedImages",
+  "short_name": "RedditSavedImages",
   "icons": [
     {
       "src": "./img/icons/android-chrome-192x192.png",

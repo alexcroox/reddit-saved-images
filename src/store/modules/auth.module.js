@@ -1,24 +1,27 @@
-import localStorage from '@/common/localstorage.service'
-import JwtService from '@/common/jwt.service'
-import ApiService from '@/common/api.service'
+import apiService from '@/common/api.service'
+import TokenService, {
+  OAUTH_NONCE_KEY,
+  ACCESS_TOKEN_KEY,
+  REFRESH_TOKEN_KEY
+} from '@/common/token.service'
 
 // Actions
 export const START_AUTH = 'auth/START_AUTH'
 export const LOGOUT = 'auth/LOGOUT'
-export const CHECK_AUTH = 'auth/CHECK_AUTH'
+export const GET_USER = 'auth/GET_USER'
 
 // Mutations
-export const SET_AUTH = 'auth/SET_AUTH'
+export const SET_TOKENS = 'auth/SET_TOKENS'
+export const SET_USER = 'auth/SET_USER'
 export const SET_ERROR = 'auth/SET_ERROR'
 export const SET_REDIRECTING = 'auth/SET_REDIRECTING'
-export const PURGE_AUTH = 'auth/PURGE_AUTH'
+export const RESET_STATE = 'auth/RESET_STATE'
 
 const initialState = () => {
   return {
-    isAuthenticated: !!JwtService.getToken(),
+    isAuthenticated: !!TokenService.getToken(ACCESS_TOKEN_KEY),
     redirecting: false,
     errors: null,
-    oauthRandomState: null,
     user: {}
   }
 }
@@ -26,9 +29,6 @@ const initialState = () => {
 const getters = {
   currentUser(state) {
     return state.user
-  },
-  isAuthenticated(state) {
-    return state.isAuthenticated
   }
 }
 
@@ -38,35 +38,34 @@ const actions = {
     console.log('Starting auth')
     // We validate the return from Reddit by confirming the state
     // nonce that we send with the original request
-    let randomState = Date.now().toString(36)
-    localStorage.save('oauthRandomState', randomState)
+    const nonce = Date.now().toString(36)
+    TokenService.saveToken(OAUTH_NONCE_KEY, nonce)
     context.commit(SET_REDIRECTING, true)
 
     // Redirect to Reddit
     window.location = `https://www.reddit.com/api/v1/authorize?client_id=${
       process.env.VUE_APP_REDDIT_CLIENT_ID
-    }&response_type=code&state=${randomState}&duration=permanent&scope=${
+    }&response_type=code&state=${nonce}&duration=permanent&scope=${
       process.env.VUE_APP_REDDIT_API_SCOPE
     }&redirect_uri=${process.env.VUE_APP_REDDIT_AUTH_RETURN_URL}`
   },
 
-  [LOGOUT](context) {
-    context.commit(PURGE_AUTH)
+  async [GET_USER](context) {
+    console.log('Getting user')
+    let response = await apiService.request('GET', '/api/v1/me')
+
+    if (!response) {
+      return null
+    }
+
+    return context.commit(SET_USER, response)
   },
 
-  async [CHECK_AUTH](context) {
-    if (JwtService.getToken()) {
-      ApiService.setHeader()
-
-      try {
-        let data = await ApiService.get('user')
-        context.commit(SET_AUTH, data.user)
-      } catch ({ response }) {
-        context.commit(SET_ERROR, response.data.errors)
-      }
-    } else {
-      context.commit(PURGE_AUTH)
-    }
+  [LOGOUT](context) {
+    TokenService.destroyToken(ACCESS_TOKEN_KEY)
+    TokenService.destroyToken(REFRESH_TOKEN_KEY)
+    TokenService.destroyToken(OAUTH_NONCE_KEY)
+    context.commit(RESET_STATE)
   }
 }
 
@@ -79,13 +78,17 @@ const mutations = {
     state.errors = error
   },
 
-  [SET_AUTH](state, user) {
+  [SET_TOKENS](state, tokens) {
     state.isAuthenticated = true
-    state.user = user
+    state.tokens = { ...state.tokens, ...tokens }
     state.errors = null
   },
 
-  [PURGE_AUTH](state) {
+  [SET_USER](state, user) {
+    state.user = user
+  },
+
+  [RESET_STATE](state) {
     Object.assign(state, initialState())
   }
 }

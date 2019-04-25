@@ -20,11 +20,13 @@ export default {
     HeadingTitle,
     'v-button': Button
   },
+
   computed: {
     ...mapState({
       redirectingToReddit: state => state.auth.redirecting
     })
   },
+
   methods: {
     ...mapActions({
       startAuth: START_AUTH
