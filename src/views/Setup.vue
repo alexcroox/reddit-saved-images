@@ -23,7 +23,7 @@ export default {
 
   computed: {
     ...mapState({
-      redirectingToReddit: state => state.auth.redirecting
+      redirectingToReddit: state => state.auth.loading
     })
   },
 

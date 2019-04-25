@@ -14,14 +14,14 @@ export const GET_USER = 'auth/GET_USER'
 export const SET_TOKENS = 'auth/SET_TOKENS'
 export const SET_USER = 'auth/SET_USER'
 export const SET_ERROR = 'auth/SET_ERROR'
-export const SET_REDIRECTING = 'auth/SET_REDIRECTING'
+export const SET_LOADING = 'auth/SET_LOADING'
 export const RESET_STATE = 'auth/RESET_STATE'
 
 const initialState = () => {
   return {
     isAuthenticated: !!TokenService.getToken(ACCESS_TOKEN_KEY),
-    redirecting: false,
-    errors: null,
+    loading: false,
+    error: null,
     user: {}
   }
 }
@@ -40,7 +40,7 @@ const actions = {
     // nonce that we send with the original request
     const nonce = Date.now().toString(36)
     TokenService.saveToken(OAUTH_NONCE_KEY, nonce)
-    context.commit(SET_REDIRECTING, true)
+    context.commit(SET_LOADING, true)
 
     // Redirect to Reddit
     window.location = `https://www.reddit.com/api/v1/authorize?client_id=${
@@ -70,18 +70,18 @@ const actions = {
 }
 
 const mutations = {
-  [SET_REDIRECTING](state, redirecting) {
-    state.redirecting = redirecting
+  [SET_LOADING](state, loading) {
+    state.loading = loading
   },
 
   [SET_ERROR](state, error) {
-    state.errors = error
+    state.error = error
   },
 
   [SET_TOKENS](state, tokens) {
     state.isAuthenticated = true
     state.tokens = { ...state.tokens, ...tokens }
-    state.errors = null
+    state.error = null
   },
 
   [SET_USER](state, user) {
@@ -95,7 +95,7 @@ const mutations = {
 
 export default {
   state: initialState(),
+  getters,
   actions,
-  mutations,
-  getters
+  mutations
 }

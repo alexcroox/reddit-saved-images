@@ -1,9 +1,9 @@
-import store from '@/store'
 import { LOGOUT } from '@/store/modules/auth.module'
 import TokenService from '@/common/token.service'
 
 class Api {
-  constructor() {
+  init(store) {
+    this.store = store
     this.authCode = btoa(`${process.env.VUE_APP_REDDIT_CLIENT_ID}:${''}`)
   }
 
@@ -17,6 +17,7 @@ class Api {
 
     let fetchOptions = {
       method,
+      mode: 'no-cors',
       fetchHeaders
     }
 
@@ -27,18 +28,25 @@ class Api {
       fetchOptions.body = formData
     }
 
-    let response = await fetch(
-      process.env.VUE_APP_REDDIT_AUTH_API_BASE_URL + path,
-      fetchOptions
-    )
+    console.log('Auth request', fetchOptions)
 
-    if (!response.ok) {
+    try {
+      let response = await fetch(
+        process.env.VUE_APP_REDDIT_AUTH_API_BASE_URL + path,
+        fetchOptions
+      )
+
+      if (!response.ok) {
+        return false
+      }
+
+      let responseData = await response.json()
+
+      return responseData
+    } catch (error) {
+      console.error('Error calling Auth API', error)
       return false
     }
-
-    let responseData = await response.json()
-
-    return responseData
   }
 
   // Normal requests for data go to oauth.reddit.com with a bearer token
@@ -64,7 +72,7 @@ class Api {
 
     // Unauthorized, we need to login again
     if (response.status === 401) {
-      store.dispatch(LOGOUT)
+      this.store.dispatch(LOGOUT)
       return false
     }
 
