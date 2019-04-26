@@ -11,9 +11,12 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
+    "object-get": "^2.1.0",
     "register-service-worker": "^1.6.2",
     "vue": "^2.6.10",
+    "vue-masonry": "^0.11.7",
     "vue-router": "^3.0.3",
+    "vuetify": "^2.0.0-alpha.17",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
@@ -32,7 +35,6 @@
     "prettier": "^1.17.0",
     "sass": "^1.18.0",
     "sass-loader": "^7.1.0",
-    "standard": "^12.0.1",
     "vue-template-compiler": "^2.5.21"
   },
   "prettier": {

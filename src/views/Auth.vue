@@ -1,19 +1,21 @@
 <template>
-  <span v-if="loading">Loading...</span>
-  <div v-else>
-    <heading-title>Failed to connect to your Reddit account</heading-title>
-    <p>{{ error }}</p>
-    <p>
-      Would you like to
-      <router-link to="/setup">Try again?</router-link>
-    </p>
-  </div>
+  <v-container>
+    <span v-if="loading">Loading...</span>
+    <div v-else>
+      <heading-title>Failed to connect to your Reddit account</heading-title>
+      <p>{{ error }}</p>
+      <p>
+        Would you like to
+        <router-link to="/setup">Try again?</router-link>
+      </p>
+    </div>
+  </v-container>
 </template>
 
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex'
-import TokenService, { OAUTH_NONCE_KEY } from '@/common/token.service'
-import apiService from '@/common/api.service'
+import TokenService, { OAUTH_NONCE_KEY } from '@/lib/token.service'
+import apiService from '@/lib/api.service'
 import {
   SET_ERROR,
   GET_USER,
@@ -42,7 +44,7 @@ export default {
   watch: {
     username: function(name) {
       if (name) {
-        this.$router.push('posts')
+        this.$router.push('/')
       }
     }
   },

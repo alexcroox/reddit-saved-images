@@ -1,37 +1,70 @@
 <template>
-  <div>
-    <heading-title>Reddit Saved Images</heading-title>
-    <p>View all your Reddit saved image posts in a grid for easy reference</p>
-    <v-button @click="startAuth" :loading="redirecting">Authorise with reddit.com</v-button>
-  </div>
+  <v-container>
+    <div
+      v-if="posts.length > 0"
+      v-masonry
+      transition-duration="0.3s"
+      fit-width="true"
+      gutter="10"
+      item-selector=".post"
+    >
+      <post-item
+        v-masonry-tile
+        v-for="post in posts"
+        :key="post.id"
+        class="post"
+        :url="post.url"
+        :title="post.title"
+        :media="post.media"
+      />
+    </div>
+  </v-container>
 </template>
 
 <script>
+import Vue from 'vue'
+import { VueMasonryPlugin } from 'vue-masonry'
 import { mapState, mapActions } from 'vuex'
-import { START_AUTH } from '@/store/modules/auth.module.js'
+import { LOGOUT } from '@/store/modules/auth.module.js'
 import { FETCH_POSTS } from '@/store/modules/posts.module.js'
-import HeadingTitle from '@/components/HeadingTitle.vue'
-import Button from '@/components/Button.vue'
+import PostItem from '@/components/PostItem.vue'
+
+Vue.use(VueMasonryPlugin)
 
 export default {
   components: {
-    HeadingTitle,
-    'v-button': Button
+    PostItem
   },
 
   mounted() {
-    this.fetchPosts()
+    this.loadPosts()
   },
 
   computed: {
     ...mapState({
-      redirecting: state => state.auth.redirecting
+      username: state => state.auth.username,
+      posts: state => state.posts.list
     })
   },
 
   methods: {
+    async loadPosts() {
+      // Do we already have posts from local storage? Let's re-arrange them
+      if (this.posts.length > 0) {
+        setTimeout(this.$redrawVueMasonry, 200)
+      }
+
+      let postLoader = await this.fetchPosts(this.username)
+
+      if (!postLoader) {
+        this.$store.dispatch(LOGOUT)
+        this.$router.push('/setup')
+      } else {
+        this.$redrawVueMasonry()
+      }
+    },
+
     ...mapActions({
-      startAuth: START_AUTH,
       fetchPosts: FETCH_POSTS
     })
   }

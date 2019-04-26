@@ -1,9 +1,10 @@
-import apiService from '@/common/api.service'
+import apiService from '@/lib/api.service'
+import localStorage from '@/lib/localstorage.service'
 import TokenService, {
   OAUTH_NONCE_KEY,
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY
-} from '@/common/token.service'
+} from '@/lib/token.service'
 
 // Actions
 export const START_AUTH = 'auth/START_AUTH'
@@ -17,6 +18,8 @@ export const SET_ERROR = 'auth/SET_ERROR'
 export const SET_LOADING = 'auth/SET_LOADING'
 export const RESET_STATE = 'auth/RESET_STATE'
 
+const existingUsername = localStorage.load('username')
+
 const initialState = () => {
   return {
     loading: false,
@@ -25,15 +28,11 @@ const initialState = () => {
       refreshToken: null
     },
     error: null,
-    username: null
+    username: existingUsername || null
   }
 }
 
 const getters = {
-  currentUser(state) {
-    return state.user
-  },
-
   isAuthenticated(state) {
     return state.username ? true : false
   }
@@ -65,6 +64,8 @@ const actions = {
       return null
     }
 
+    localStorage.save('username', response.name)
+
     return context.commit(SET_USERNAME, response.name)
   },
 
@@ -72,6 +73,7 @@ const actions = {
     TokenService.destroyToken(ACCESS_TOKEN_KEY)
     TokenService.destroyToken(REFRESH_TOKEN_KEY)
     TokenService.destroyToken(OAUTH_NONCE_KEY)
+    localStorage.delete('username')
     context.commit(RESET_STATE)
   }
 }
@@ -86,6 +88,8 @@ const mutations = {
   },
 
   [SET_TOKENS](state, tokens) {
+    TokenService.saveToken(ACCESS_TOKEN_KEY, tokens.accessToken)
+    TokenService.saveToken(REFRESH_TOKEN_KEY, tokens.refreshToken)
     state.tokens = { ...state.tokens, ...tokens }
     state.error = null
   },

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Posts from '@/views/Posts.vue'
-import authGuard from '@/router/guards/auth.guard'
+import requireUser from '@/router/guards/auth.guard'
 
 Vue.use(Router)
 
@@ -11,7 +11,7 @@ export default new Router({
     {
       path: '/',
       name: 'posts',
-      beforeEnter: authGuard,
+      beforeEnter: requireUser,
       component: Posts
     },
     {

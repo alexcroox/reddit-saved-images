@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <v-container>
     <heading-title>Reddit Saved Images</heading-title>
     <p>View all your Reddit saved image posts in a grid for easy reference</p>
     <v-button
       @click="startAuth"
       :loading="redirectingToReddit"
     >{{ redirectingToReddit ? 'Redirecting to reddit.com...' : 'Authorise with reddit.com' }}</v-button>
-  </div>
+  </v-container>
 </template>
 
 <script>

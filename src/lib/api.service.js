@@ -1,8 +1,7 @@
-import { LOGOUT } from '@/store/modules/auth.module'
+import TokenService, { ACCESS_TOKEN_KEY } from '@/lib/token.service'
 
 class Api {
-  init(store) {
-    this.store = store
+  constructor() {
     this.authCode = btoa(`${process.env.VUE_APP_REDDIT_CLIENT_ID}:`)
   }
 
@@ -26,8 +25,6 @@ class Api {
       fetchOptions.body = formData
     }
 
-    console.log('Auth request', fetchOptions)
-
     try {
       let response = await fetch(
         process.env.VUE_APP_REDDIT_AUTH_API_BASE_URL + path,
@@ -49,11 +46,11 @@ class Api {
 
   // Normal requests for data go to oauth.reddit.com with a bearer token
   async request(method, path) {
-    console.log('Requesting path', path)
+    const accessToken = TokenService.getToken(ACCESS_TOKEN_KEY)
 
-    const accessToken = this.store.state.auth.tokens.accessToken
-
-    console.log({ accessToken })
+    if (!accessToken) {
+      return false
+    }
 
     let fetchHeaders = {
       Authorization: `bearer ${accessToken}`,
@@ -68,11 +65,8 @@ class Api {
       }
     )
 
-    console.log('Api response', response.status)
-
     // Unauthorized, we need to login again
     if (response.status === 401) {
-      this.store.dispatch(LOGOUT)
       return false
     }
 
