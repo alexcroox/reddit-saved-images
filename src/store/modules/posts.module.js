@@ -8,17 +8,21 @@ export const PURGE_POSTS = 'posts/PURGE_POSTS'
 
 // Mutations
 export const SET_POSTS = 'posts/SET_POSTS'
+export const SET_FETCHING = 'posts/SET_FETCHING'
+
 const storedPosts = JSON.parse(localStorage.load('posts'))
 
 const initialState = () => {
   return {
     list: storedPosts ? storedPosts : [],
-    fetchFailed: false
+    fetching: true
   }
 }
 
 const actions = {
   async [FETCH_POSTS](context, username) {
+    context.commit(SET_FETCHING, true)
+
     let response = await apiService.request(
       'GET',
       `/user/${username}/saved?limit=100`
@@ -51,6 +55,7 @@ const actions = {
     })
 
     context.commit(SET_POSTS, posts)
+    context.commit(SET_FETCHING, false)
 
     return true
   },
@@ -70,6 +75,10 @@ const mutations = {
     } else {
       localStorage.delete('posts')
     }
+  },
+
+  [SET_FETCHING](state, fetching) {
+    state.fetching = fetching
   }
 }
 

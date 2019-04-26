@@ -35,12 +35,24 @@
       />
     </div>
 
-    <v-layout class="mt-5" v-if="posts.length === 0" align-content-center justify-center wrap>
+    <v-layout
+      class="mt-5"
+      v-if="posts.length === 0 && fetching"
+      align-content-center
+      justify-center
+      wrap
+    >
       <v-flex xs12 subtitle-1 text-xs-center>Getting your saved posts</v-flex>
       <v-flex xs2>
         <v-progress-linear color="teal" indeterminate rounded height="6"></v-progress-linear>
       </v-flex>
     </v-layout>
+
+    <v-alert
+      v-if="posts.length === 0 && !fetching"
+      type="error"
+      class="mt-4"
+    >You have no saved image posts currently</v-alert>
   </div>
 </template>
 
@@ -66,7 +78,8 @@ export default {
   computed: {
     ...mapState({
       username: state => state.auth.username,
-      posts: state => state.posts.list
+      posts: state => state.posts.list,
+      fetching: state => state.posts.fetching
     })
   },
 

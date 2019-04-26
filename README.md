@@ -31,3 +31,5 @@ I prefer Standard JS but it doesn't support Vue component files. I'm personally 
 - Use the oauth refresh token.
 
 - Vuetify is used because my new company utilises it so I needed to check it out. Currently the entire lib is imported for learnig convenience but I need to import just the components used to reduce bundle size.
+
+- TESTS!
