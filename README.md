@@ -4,7 +4,7 @@
 
 [https://redditsaved.com](https://redditsaved.com)
 
-![screenshot](https://cl.ly/dc97492b4661/Screenshot%202019-04-26%20at%2022.37.42.png)
+![screenshot](https://cl.ly/62c414d20816/Screenshot%202019-04-26%20at%2022.37.42.jpg)
 
 ## Privacy and security
 
