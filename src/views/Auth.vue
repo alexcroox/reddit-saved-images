@@ -1,15 +1,15 @@
 <template>
-  <v-container>
+  <v-layout column justify-center align-center fill-height>
     <span v-if="loading">Loading...</span>
     <div v-else>
-      <heading-title>Failed to connect to your Reddit account</heading-title>
-      <p>{{ error }}</p>
+      <h1 class="display-1">Failed to connect to your Reddit account</h1>
+      <v-alert type="error" class="mt-4">{{ error }}</v-alert>
       <p>
         Would you like to
         <router-link to="/setup">Try again?</router-link>
       </p>
     </div>
-  </v-container>
+  </v-layout>
 </template>
 
 <script>
@@ -38,7 +38,7 @@ export default {
 
   watch: {
     username: function(name) {
-      if (name) {
+      if (typeof name === 'string') {
         this.$router.push('/')
       }
     }

@@ -4,6 +4,7 @@ import getMedia from '@/lib/media-domains'
 
 // Actions
 export const FETCH_POSTS = 'posts/FETCH_POSTS'
+export const PURGE_POSTS = 'posts/PURGE_POSTS'
 
 // Mutations
 export const SET_POSTS = 'posts/SET_POSTS'
@@ -52,13 +53,23 @@ const actions = {
     context.commit(SET_POSTS, posts)
 
     return true
+  },
+
+  [PURGE_POSTS](context) {
+    context.commit(SET_POSTS, [])
   }
 }
 
 const mutations = {
   [SET_POSTS](state, posts) {
-    state.posts = posts
-    localStorage.save('posts', JSON.stringify(posts))
+    state.list = posts
+    state.fetchFailed = false
+
+    if (posts.length) {
+      localStorage.save('posts', JSON.stringify(posts))
+    } else {
+      localStorage.delete('posts')
+    }
   }
 }
 

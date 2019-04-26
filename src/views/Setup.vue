@@ -9,7 +9,7 @@
       color="primary"
       :loading="redirectingToReddit"
       :disabled="redirectingToReddit"
-    >{{ redirectingToReddit ? 'Redirecting to reddit.com...' : 'Authorise with reddit.com' }}</v-btn>
+    >{{ redirectingToReddit ? 'Redirecting to reddit.com...' : 'Connect with reddit.com' }}</v-btn>
 
     <p class="mt-5">
       This app runs entirely in your browser, there is no server to send data to.

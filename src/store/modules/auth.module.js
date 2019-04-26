@@ -5,6 +5,7 @@ import TokenService, {
   ACCESS_TOKEN_KEY,
   REFRESH_TOKEN_KEY
 } from '@/lib/token.service'
+import { PURGE_POSTS } from './posts.module'
 
 // Actions
 export const START_AUTH = 'auth/START_AUTH'
@@ -41,7 +42,6 @@ const getters = {
 const actions = {
   // Start the oauth dance with Reddit
   [START_AUTH](context) {
-    console.log('Starting auth')
     // We validate the return from Reddit by confirming the state
     // nonce that we send with the original request
     const nonce = Date.now().toString(36)
@@ -57,7 +57,6 @@ const actions = {
   },
 
   async [GET_USER](context) {
-    console.log('Getting user')
     let response = await apiService.request('GET', '/api/v1/me')
 
     if (!response || 'name' in response === false) {
@@ -74,6 +73,7 @@ const actions = {
     TokenService.destroyToken(REFRESH_TOKEN_KEY)
     TokenService.destroyToken(OAUTH_NONCE_KEY)
     localStorage.delete('username')
+    context.dispatch(PURGE_POSTS, null, { root: true })
     context.commit(RESET_STATE)
   }
 }
