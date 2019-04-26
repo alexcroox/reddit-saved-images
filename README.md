@@ -14,7 +14,7 @@ Your Reddit access token and displayed saved posts will remain only in your brow
 
 ## Motivation
 
-I "Save to Reddit" images and gifs I like for future sharing. It's often hard trying to re-find them at a later date browsing `/user/me/saved/` when they are mixed with saved comments and normal posts. This project fetches all saved images and gifs and presents them in a grid for easier browsing.
+I often "Save to Reddit" images and gifs I like for future sharing. It's often hard trying to re-find them at a later date when browsing `/user/me/saved/` as they are mixed with non-image posts. This project fetches all saved images and gifs and presents them in a grid for easier browsing.
 
 ### Learning
 
