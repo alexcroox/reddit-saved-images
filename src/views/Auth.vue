@@ -22,13 +22,8 @@ import {
   SET_TOKENS,
   SET_LOADING
 } from '@/store/modules/auth.module.js'
-import HeadingTitle from '@/components/HeadingTitle'
 
 export default {
-  components: {
-    HeadingTitle
-  },
-
   mounted() {
     this.handleAuthoriseReturn()
   },

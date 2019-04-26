@@ -1,26 +1,37 @@
 <template>
-  <v-container>
-    <heading-title>Reddit Saved Images</heading-title>
-    <p>View all your Reddit saved image posts in a grid for easy reference</p>
-    <v-button
+  <v-layout column justify-center align-center fill-height>
+    <h1 class="display-3">Reddit Saved Images</h1>
+
+    <p class="mt-4 mb-5">View all your Reddit saved image posts in a grid for easy reference</p>
+
+    <v-btn
       @click="startAuth"
+      color="primary"
       :loading="redirectingToReddit"
-    >{{ redirectingToReddit ? 'Redirecting to reddit.com...' : 'Authorise with reddit.com' }}</v-button>
-  </v-container>
+      :disabled="redirectingToReddit"
+    >{{ redirectingToReddit ? 'Redirecting to reddit.com...' : 'Authorise with reddit.com' }}</v-btn>
+
+    <p class="mt-5">
+      This app runs entirely in your browser, there is no server to send data to.
+      <br>Your Reddit access token will remain only in your browser
+    </p>
+
+    <p class="mt-5">
+      This app is entirely
+      <a
+        href="https://github.com/alexcroox/reddit-saved-images"
+        target="_blank"
+        rel="noopener noreferrer"
+      >open source</a>
+    </p>
+  </v-layout>
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex'
 import { START_AUTH } from '@/store/modules/auth.module.js'
-import HeadingTitle from '@/components/HeadingTitle.vue'
-import Button from '@/components/Button.vue'
 
 export default {
-  components: {
-    HeadingTitle,
-    'v-button': Button
-  },
-
   computed: {
     ...mapState({
       redirectingToReddit: state => state.auth.loading
