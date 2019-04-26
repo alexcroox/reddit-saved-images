@@ -8,7 +8,7 @@
     "test:style": "npx prettier --check 'src/**/*.js'",
     "test:e2e": "vue-cli-service test:e2e",
     "test:unit": "vue-cli-service test:unit",
-    "deploy:live": "vue-cli-service build && aws s3 sync build/ s3://reddit-saved-images --profile reddit-saved-images"
+    "deploy:live": "vue-cli-service build && aws s3 sync dist/ s3://reddit-saved-images --profile reddit-saved-images"
   },
   "dependencies": {
     "core-js": "^2.6.5",
