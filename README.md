@@ -30,6 +30,8 @@ I prefer Standard JS but it doesn't support Vue component files. I'm personally 
 
 - Replace the masonry grid, it's janky at best. It's not an easy problem to solve given there is no image/video loaded detection which makes auto layouts tricky.
 
+- In the limited time I had to build this I've not given much love to responsive tweaks yet
+
 - Use the oauth refresh token.
 
 - Vuetify is used because my new company utilises it so I needed to check it out. Currently the entire lib is imported for learning convenience, but I need to import just the components used in order to reduce bundle size.
